@@ -24,4 +24,5 @@ def near_items():
     response = requests.get(f"https://api.nasa.gov/neo/rest/v1/feed?api_key={os.environ.get("NEOWS_API")}")
     return jsonify(response.json())
 
-app.run()
+if __name__ == "__main__":
+    app.run(port=8000)
