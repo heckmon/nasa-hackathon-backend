@@ -21,7 +21,7 @@ def coordinates():
 
 @app.route("/near_items", methods=['POST'])
 def near_items():
-    response = requests.get(f"https://api.nasa.gov/neo/rest/v1/feed?api_key={os.getenv("NEOWS_API")}")
+    response = requests.get(f"https://api.nasa.gov/neo/rest/v1/feed?api_key={os.environ.get("NEOWS_API")}")
     return jsonify(response.json())
 
 app.run(debug=True)
