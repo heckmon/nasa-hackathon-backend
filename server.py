@@ -12,6 +12,7 @@ def coordinates():
     data = request.get_json()
     try:
         obj = Horizons(id=f'DES={data['id']}', location='500@399')
+        obj.cache_location = "/tmp"
         vectors = obj.vectors()
         x = vectors['x'].value[0]
         y = vectors['y'].value[0]
