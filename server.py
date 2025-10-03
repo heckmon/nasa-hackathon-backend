@@ -1,8 +1,11 @@
 import os
+import datetime
 import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from astroquery.jplhorizons import Horizons
+
+today = datetime.date.today().strftime("%Y-%m-%d")
 
 app = Flask(__name__)
 CORS(app, methods=['POST'])
@@ -22,7 +25,7 @@ def coordinates():
 
 @app.route("/near_items", methods=['POST'])
 def near_items():
-    response = requests.get(f"https://api.nasa.gov/neo/rest/v1/feed?api_key={os.environ.get("NEOWS_API")}")
+    response = requests.get(f"https://api.nasa.gov/neo/rest/v1/feed?start_date={today}&end_date={today}&api_key={os.environ.get("NEOWS_API")}")
     return jsonify(response.json())
 
 if __name__ == "__main__":
