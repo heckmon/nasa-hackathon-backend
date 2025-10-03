@@ -18,7 +18,7 @@ def coordinates():
         y = vectors['y'].value[0]
         z = vectors['z'].value[0]
         return jsonify({'x': x, 'y': y, 'z': z}), 200
-    except Exception as e: return f"An error occurred:\n{e}", 500
+    except Exception as e: return jsonify({'error': str(e)}), 500
 
 @app.route("/near_items", methods=['POST'])
 def near_items():
