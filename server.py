@@ -35,5 +35,18 @@ def near_items():
     response = requests.get(f"https://api.nasa.gov/neo/rest/v1/feed?start_date={start_date}&end_date={end_date}&api_key={os.environ.get("NEOWS_API")}")
     return jsonify(response.json())
 
+@app.route("/velocity_vectors", methods=['POST'])
+def velocity_vectors():
+    try:
+        data = request.get_json()
+        obj = Horizons(id=f'DES={data['id']}', location='500@399')
+        obj.cache_location = "/tmp"
+        vectors = obj.vectors()
+        vx = vectors['vx'].value[0]
+        vy = vectors['vy'].value[0]
+        vz = vectors['vz'].value[0]
+        return jsonify({'vx': vx, 'vy': vy, 'vz': vz}), 200
+    except Exception as e: return jsonify({'error': str(e)}), 500
+
 if __name__ == "__main__":
     app.run(port=8000)
