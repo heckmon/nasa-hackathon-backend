@@ -25,7 +25,14 @@ def coordinates():
 
 @app.route("/near_items", methods=['POST'])
 def near_items():
-    response = requests.get(f"https://api.nasa.gov/neo/rest/v1/feed?start_date={today}&end_date={today}&api_key={os.environ.get("NEOWS_API")}")
+    data = request.get_json(silent=True)
+    if not data:
+        start_date = datetime.date.today().strftime("%Y-%m-%d")
+        end_date = datetime.date.today().strftime("%Y-%m-%d")
+    else:
+        start_date = data.get('start_date', datetime.date.today().strftime("%Y-%m-%d"))
+        end_date = data.get('end_date', datetime.date.today().strftime("%Y-%m-%d"))
+    response = requests.get(f"https://api.nasa.gov/neo/rest/v1/feed?start_date={start_date}&end_date={end_date}&api_key={os.environ.get("NEOWS_API")}")
     return jsonify(response.json())
 
 if __name__ == "__main__":
