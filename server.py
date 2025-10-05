@@ -21,7 +21,16 @@ def coordinates():
         x = vectors['x'].value[0]
         y = vectors['y'].value[0]
         z = vectors['z'].value[0]
-        return jsonify({'x': x, 'y': y, 'z': z}), 200
+
+        R = 6371.0
+        dist = (x**2 + y**2 + z**2)**0.5
+        x_surf = x * R / dist
+        y_surf = y * R / dist
+        z_surf = z * R / dist
+
+        lat = math.degrees(math.atan2(z_surf, (x_surf**2 + y_surf**2)**0.5))
+        lon = math.degrees(math.atan2(y_surf, x_surf))
+        return jsonify({'x': x, 'y': y, 'z': z, 'lat': lat, 'lon': lon}), 200
     except Exception as e: return jsonify({'error': str(e)}), 500
 
 @app.route("/near_items", methods=['POST'])
@@ -48,24 +57,6 @@ def velocity_vectors():
         vz = vectors['vz'].value[0]
         return jsonify({'vx': vx, 'vy': vy, 'vz': vz}), 200
     except Exception as e: return jsonify({'error': str(e)}), 500
-
-@app.route("/closest_point", methods=['POST'])
-def closest_point():
-    data = request.get_json()
-    obj = Horizons(id=f"DES={data['id']}", location='500@399')
-    vectors = obj.vectors()
-    x, y, z = vectors['x'][0], vectors['y'][0], vectors['z'][0]
-
-    R = 6371.0
-    dist = (x**2 + y**2 + z**2)**0.5
-    x_surf = x * R / dist
-    y_surf = y * R / dist
-    z_surf = z * R / dist
-
-    lat = math.degrees(math.atan2(z_surf, (x_surf**2 + y_surf**2)**0.5))
-    lon = math.degrees(math.atan2(y_surf, x_surf))
-
-    return jsonify({'lat': lat, 'lon': lon})
 
 
 if __name__ == "__main__":
